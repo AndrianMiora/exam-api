@@ -48,3 +48,25 @@ def read_welcome(name: str):
 @app.post("/students")
 def read_student():
     return
+
+#Q4- Créer une route GET /students qui ne prend rien en paramètre, et qui
+# retourne le contenu de la liste d’objets students actuellement stockés en
+# mémoire avec un code de status 200 OK.. (2 points)
+
+
+#Q5- Créer une requête idempotente à travers une nouvelle route PUT /students,
+# en utilisant l’attribut “Reference” comme identifiant unique. Autrement dit,
+# si la Reference fournie dans le corps existe déjà, alors effectuer une
+# modification si les valeurs ont été modifiées, sinon effectuer un ajout.
+# (4 points)
+
+
+#Q6-  Pour chaque route qui a été définie plus tôt, vous allez maintenant
+# uploader un capture d’écran pour illustrer que vous maîtrisez Postman comme
+# client HTTP. Pour cela :
+#     - Créez un nouveau dossier intitulé “postman” dans votre projet
+#     - Renommer chaque fichier de la capture respectivement selon la route que vous avez
+#     créé précédemment. Par exemple, si votre route affichée sur Postman est GET /hello,
+#     cela correspond à la Q1, donc vous allez renommer le fichier Q1.
+#     Pour les 5 questions, vous devez donc avoir 5 images de captures d’écran intitulées
+#     Q1 jusqu’à Q5, si vous avez tout terminé.
