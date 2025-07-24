@@ -4,7 +4,7 @@ from starlette.responses import Response, JSONResponse
 
 app = FastAPI()
 
-#Q1- Créer une route GET /hello, qui ne prend rien en paramètres
+#Q1-Créer une route GET /hello, qui ne prend rien en paramètres
 # et qui retourne le message “Hello world” dans le corps de la réponse
 # avec un code de status 200 OK. (3 points)
 
@@ -16,11 +16,11 @@ def read_hello():
         media_type="application/json"
     )
 
-#Q2- Créer une route GET /welcome, qui prend le paramètre de requête
+#Q2-Créer une route GET /welcome, qui prend le paramètre de requête
 # “name” de type chaîne de caractère, et qui retourne le message
-# “Welcome <name>” comme corps de la réponse avec une code de status 200 OK,
+# “Welcome <name>” comme corps de la réponse avec un code de status 200 OK,
 # où <name> est la valeur du paramètre fourni. Le corps de la réponse peut être
-# soit en texte brute, soit en JSON avec l’attribut de votre choix, mais pas
+# soit en texte brut, soit en JSON avec l’attribut de votre choix, mais pas
 # les deux. (3 points)
 
 @app.get("/welcome")
@@ -31,7 +31,7 @@ def read_welcome(name: str):
         media_type="application/json"
     )
 
-#Q3- Créer une route POST /students, qui prend dans le corps de la requête
+#Q3-Créer une route POST /students, qui prend dans le corps de la requête
 # une liste d’objet JSON qui a les attributs suivants :
     #- Reference, de type chaîne de caractères
     #- FirstName, de type chaîne de caractères
@@ -40,33 +40,64 @@ def read_welcome(name: str):
 # Le comportement attendu par cette requête est de mémoriser en mémoire (vive),
 # la liste des objets qui ont été fournis à travers le corps de la requête, et
 # la réponse attendue est de retourner la liste contenant les objets students
-# mémorisés en mémoire vive, c’est à dire ceux qui viennent d’être ajoutés et
-# ceux qui ont déjà existés avant l’ajout. Le code de statut attendu possède
+# mémorisés en mémoire vive, c'est-à-dire ceux qui viennent d’être ajoutés et
+# ceux qui ont déjà existés avant l’ajout. Le code de statut attendu va posséder
 # la signification CREATED et pas le code de statut générique dont la
-# signification est OK (3 points)
+# signification est OK (3 points).
 
 @app.post("/students")
-def read_student():
-    return
+def create_student(request: Request, reference: str, first_name: str, last_name: str, age: int):
+    return {"message:" f"Student {reference}: {first_name} {last_name}, {age} created"}
 
-#Q4- Créer une route GET /students qui ne prend rien en paramètre, et qui
+#Q4-Créer une route GET /students qui ne prend rien en paramètre, et qui
 # retourne le contenu de la liste d’objets students actuellement stockés en
-# mémoire avec un code de status 200 OK.. (2 points)
+# mémoire avec un code de status 200 OK. (2 points)
+@app.get("/students")
+def read_student():
+    return JSONResponse(
+        content={"message"},
+        status_code=200
+    )
 
-
-#Q5- Créer une requête idempotente à travers une nouvelle route PUT /students,
+#Q5-Créer une requête idempotente à travers une nouvelle route PUT /students,
 # en utilisant l’attribut “Reference” comme identifiant unique. Autrement dit,
 # si la Reference fournie dans le corps existe déjà, alors effectuer une
 # modification si les valeurs ont été modifiées, sinon effectuer un ajout.
 # (4 points)
+@app.put("/students")
+def put_student():
+    return
 
+@app.get("/students-authorized")
+def read_rood(request: Request):
+    headers = request.headers
+    if "Authorization" in headers:
+        return JSONResponse(
+            content={"status": "FORBBIDEN", "message": "Authorization denied"},
+            status_code=403,
+            media_type="application/json"
+        )
+    authorization = headers.get("Authorization")
+    if authorization != "bon courage":
+        return JSONResponse(
+            content={"status": "FORBBIDEN", "message": "Unknown authorization"},
+            status_code=403,
+            media_type="application/json"
+        )
+    return {"..."}
 
-#Q6-  Pour chaque route qui a été définie plus tôt, vous allez maintenant
-# uploader un capture d’écran pour illustrer que vous maîtrisez Postman comme
-# client HTTP. Pour cela :
-#     - Créez un nouveau dossier intitulé “postman” dans votre projet
-#     - Renommer chaque fichier de la capture respectivement selon la route que vous avez
-#     créé précédemment. Par exemple, si votre route affichée sur Postman est GET /hello,
-#     cela correspond à la Q1, donc vous allez renommer le fichier Q1.
-#     Pour les 5 questions, vous devez donc avoir 5 images de captures d’écran intitulées
-#     Q1 jusqu’à Q5, si vous avez tout terminé.
+    # def root(req: Request):
+    #     headers = req.headers
+    #     if "x-api-key" in headers:
+    #         return JSONResponse(
+    #             content={"status": "FORBBIDEN", "message": "API key is missing"},
+    #             status_code=403,
+    #             media_type="application/json"
+    #         )
+    #     api_key = headers.get("x-api-key")
+    #     if api_key != "12345678":
+    #         return JSONResponse(
+    #             content={"status": "FORBBIDEN", "message": "Unknown API key"},
+    #             status_code=403,
+    #             media_type="application/json"
+    #         )
