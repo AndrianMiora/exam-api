@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
@@ -7,7 +8,6 @@ app = FastAPI()
 #Q1-Créer une route GET /hello, qui ne prend rien en paramètres
 # et qui retourne le message “Hello world” dans le corps de la réponse
 # avec un code de status 200 OK. (3 points)
-
 @app.get("/hello")
 def read_hello():
     return JSONResponse(
@@ -22,7 +22,6 @@ def read_hello():
 # où <name> est la valeur du paramètre fourni. Le corps de la réponse peut être
 # soit en texte brut, soit en JSON avec l’attribut de votre choix, mais pas
 # les deux. (3 points)
-
 @app.get("/welcome")
 def read_welcome(name: str):
     return JSONResponse(
@@ -45,9 +44,18 @@ def read_welcome(name: str):
 # la signification CREATED et pas le code de statut générique dont la
 # signification est OK (3 points).
 
+class StudentRequest(BaseModel):
+    reference: str
+    first_name: str
+    last_name: str
+    age: int
 @app.post("/students")
-def create_student(request: Request, reference: str, first_name: str, last_name: str, age: int):
-    return {"message:" f"Student {reference}: {first_name} {last_name}, {age} created"}
+def create_student(request: StudentRequest):
+    return JSONResponse(
+        content={"student": f"{request.reference}: {request.first_name} {request.last_name}, {request.age}"},
+        status_code=201,
+        media_type="application/json"
+    )
 
 #Q4-Créer une route GET /students qui ne prend rien en paramètre, et qui
 # retourne le contenu de la liste d’objets students actuellement stockés en
@@ -55,7 +63,7 @@ def create_student(request: Request, reference: str, first_name: str, last_name:
 @app.get("/students")
 def read_student():
     return JSONResponse(
-        content={"message"},
+        content={},
         status_code=200
     )
 
@@ -85,19 +93,3 @@ def read_rood(request: Request):
             media_type="application/json"
         )
     return {"..."}
-
-    # def root(req: Request):
-    #     headers = req.headers
-    #     if "x-api-key" in headers:
-    #         return JSONResponse(
-    #             content={"status": "FORBBIDEN", "message": "API key is missing"},
-    #             status_code=403,
-    #             media_type="application/json"
-    #         )
-    #     api_key = headers.get("x-api-key")
-    #     if api_key != "12345678":
-    #         return JSONResponse(
-    #             content={"status": "FORBBIDEN", "message": "Unknown API key"},
-    #             status_code=403,
-    #             media_type="application/json"
-    #         )
